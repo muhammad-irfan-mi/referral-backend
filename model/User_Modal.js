@@ -2,26 +2,32 @@ const mongoose = require('mongoose')
 
 const RegisterUser = new mongoose.Schema(
     {
-        fname:{
+        fname: {
             type: String,
             required: true
         },
-        lname:{
+        lname: {
             type: String,
             required: true
         },
-        email:{
+        email: {
             type: String,
             required: true,
             unique: true,
         },
-        password:{
+        password: {
             type: String,
             required: true,
         },
-        referral:{
+        referral: {
             type: String,
-        },        
+        },
+        isApproved: {
+            type: String
+        },
+        isBlocked:{
+            type: String
+        }
     },
     {
         timestamps: true,
