@@ -24,6 +24,10 @@ mongoose.connect(process.env.MONGO_URL)
 // ***************** USER ***************** //
 app.use('/api', require('./routes/User'))
 
+// Reset and Forget
+app.use('/api/reset', require('./routes/reset'))
+
+
 // Task
 app.use('/api', require('./routes/Questions'));
 
