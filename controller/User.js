@@ -136,6 +136,7 @@ const handleLogin = async (req, res) => {
     try {
         // Find the user by email
         const User = await UserModal.findOne({ email: req.body.email });
+        console.log("Usersadfgh", User)
 
         // Check if the user exists
         if (!User) {
@@ -144,18 +145,20 @@ const handleLogin = async (req, res) => {
 
         // Verify the password using bcrypt
         const isPasswordValid = await bcrypt.compare(req.body.password, User.password);
-
+        console.log("isPasswordValid", isPasswordValid)
         if (!isPasswordValid) {
             return res.status(400).json({ status: 'error', msg: "Invalid credentials" });
         }
 
         const userPoints = await Point.findOne({ userId: User._id });
+        console.log("userPoints", userPoints)
 
         if (!userPoints) {
             return res.status(404).json({ status: 'error', msg: "Points not found for this user" });
         }
 
         const userReferral = await Referral.findOne({ userId: User._id });
+        console.log("userReferral", userReferral)
 
         if (!userReferral) {
             return res.status(404).json({ status: 'error', msg: "Points not found for this user" });
@@ -206,10 +209,12 @@ const handleMyReferals = async (req, res) => {
 
 // Handle user for Global Data 
 const handleUserByToken = async (req, res) => {
-    const userIdFromToken = req.userId;
+    const userIdFromToken = req.user;
+    console.log({userIdFromToken})
 
     try {
-        const user = await UserModal.findOne({ id: userIdFromToken });
+        const user = await UserModal.findById(userIdFromToken.userId);
+    console.log({user})
 
         if (user) {
             res.status(200).json({ userId: user.id });
