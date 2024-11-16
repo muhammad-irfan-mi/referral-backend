@@ -16,7 +16,7 @@ const UserModal = require('./model/User_Modal')
 const Question = require('./model/question_Modal')
 const Point = require('./model/Point')
 
-mongoose.connect('mongodb://localhost:27017/user-authentication-refrral-web')
+mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log('MongoDB Connected'))
     .catch((err) => console.log(err))
 
@@ -44,5 +44,5 @@ app.use('/api/widthdraw', require('./routes/Withdraw'))
 
 
 app.listen(PORT, () => {
-    console.log(`Server Started on PORT : ${PORT}`)
+    console.log(`Server Started on PORT : ${PORT}`,"monodb = ",process.env.MONGO_URL)
 })
