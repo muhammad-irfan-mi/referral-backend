@@ -71,7 +71,7 @@ const resetPassword = async (req, res) => {
     console.log(user)
     // console.log({user})
     if (!user) return res.status(404).json({ message: "User not found" });    
-    if (!bcrypt.compareSync(otp, user.resetPasswordOTP) || Date.now() > user.resetPasswordExpiry) {
+    if (!bcrypt.compareSync(otp, user.resetPasswordOTP)) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
     console.log(bcrypt.compareSync(otp, user.resetPasswordOTP) || Date.now() > user.resetPasswordExpiry)
