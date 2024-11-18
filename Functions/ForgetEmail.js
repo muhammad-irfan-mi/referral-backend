@@ -2,7 +2,7 @@ require('dotenv').config();
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-const User = require("../model/User"); 
+const User = require("../model/User_Modal"); 
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',  
@@ -35,7 +35,9 @@ const forgotPassword = async (req,res) => {
     // Hash the OTP and store it temporarily
     user.resetPasswordOTP = bcrypt.hashSync(otp, 10);
     user.resetPasswordExpiry = Date.now() + 10 * 60 * 1000; // OTP expires in 10 minutes
-    await user.save();
+    console.log(`expiry ${ user.resetPasswordExpiry}  otp ${user.resetPasswordOTP }`)
+    const updatedUser=await user.save();
+    console.log(`updated ${updatedUser}`)
     // Send OTP via email
     const mailOptions = {
       from: process.env.EMAIL,
@@ -66,6 +68,7 @@ const resetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
   try {
     const user = await User.findOne({ email });
+    console.log(user)
     // console.log({user})
     if (!user) return res.status(404).json({ message: "User not found" });    
     if (!bcrypt.compareSync(otp, user.resetPasswordOTP) || Date.now() > user.resetPasswordExpiry) {
@@ -74,8 +77,11 @@ const resetPassword = async (req, res) => {
     console.log(bcrypt.compareSync(otp, user.resetPasswordOTP) || Date.now() > user.resetPasswordExpiry)
 
     user.password = await bcrypt.hash(newPassword, 10);
+ 
     user.resetPasswordOTP = undefined;
+  
     user.resetPasswordExpiry = undefined;
+  
     await user.save();
     
     res.json({ message: "Password reset successful" });

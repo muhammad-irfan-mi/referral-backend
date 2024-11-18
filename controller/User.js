@@ -6,6 +6,7 @@ const Point = require('../model/Point')
 const Referral = require('../model/User_Referral');
 
 
+
 const JWT_SECRET = "12@345%6789";
 
 let defaultPoints = 150;
@@ -210,11 +211,11 @@ const handleMyReferals = async (req, res) => {
 // Handle user for Global Data 
 const handleUserByToken = async (req, res) => {
     const userIdFromToken = req.user;
-    console.log({userIdFromToken})
+    console.log({ userIdFromToken })
 
     try {
         const user = await UserModal.findById(userIdFromToken.userId);
-    console.log({user})
+        console.log({ user })
 
         if (user) {
             res.status(200).json({ userId: user.id });
@@ -256,6 +257,8 @@ const handleUpdatePoint = async (req, res) => {
 
 // Update User By Id
 const handleUpdateUser = async (req, res) => {
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     try {
         const userId = req.params.id;
         const updatedUser = await UserModal.findByIdAndUpdate(
@@ -265,7 +268,7 @@ const handleUpdateUser = async (req, res) => {
                     fname: req.body.fname,
                     lname: req.body.lname,
                     // email: req.body.email,
-                    password: req.body.password
+                    password: hashedPassword
                 }
             },
             { new: true } // To return the updated document

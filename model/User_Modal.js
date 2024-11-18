@@ -27,6 +27,12 @@ const RegisterUser = new mongoose.Schema(
         },
         isBlocked:{
             type: String
+        } ,
+        resetPasswordOTP:{
+            type: String
+        },
+        resetPasswordExpiry:{
+            type: String
         }
     },
     {
