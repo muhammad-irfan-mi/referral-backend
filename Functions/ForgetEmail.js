@@ -76,6 +76,11 @@ const resetPassword = async (req, res) => {
     }
     console.log(bcrypt.compare(otp, user.resetPasswordOTP) || Date.now() > user.resetPasswordExpiry)
 
+     // const isOtpValid = bcrypt.compareSync(otp, user.resetPasswordOTP);
+    // if (!isOtpValid || Date.now() > user.resetPasswordExpiry) {
+    //   return res.status(400).json({ message: "Invalid or expired OTP" });
+    // }
+
     user.password = await bcrypt.hash(newPassword, 10);
  
     user.resetPasswordOTP = undefined;

@@ -135,52 +135,48 @@ const handleGetApprovedUsers = async (req, res) => {
 const handleLogin = async (req, res) => {
     console.log(req.body);
     try {
-        // Find the user by email
         const User = await UserModal.findOne({ email: req.body.email });
-        console.log("Usersadfgh", User)
+        // console.log({User})
 
-        // Check if the user exists
         if (!User) {
-            return res.status(404).json({ status: 'error', msg: "User not found" });
+            return res.json({ status: 'error', msg: "User not found" });
         }
 
-        // Verify the password using bcrypt
         const isPasswordValid = await bcrypt.compare(req.body.password, User.password);
-        console.log("isPasswordValid", isPasswordValid)
+        console.log({ isPasswordValid })
+
         if (!isPasswordValid) {
-            return res.status(400).json({ status: 'error', msg: "Invalid credentials" });
+            return res.json({ status: 'error', msg: "Invalid credentials" });
         }
 
         const userPoints = await Point.findOne({ userId: User._id });
-        console.log("userPoints", userPoints)
+
 
         if (!userPoints) {
             return res.status(404).json({ status: 'error', msg: "Points not found for this user" });
         }
 
         const userReferral = await Referral.findOne({ userId: User._id });
-        console.log("userReferral", userReferral)
+        console.log({ userReferral })
+        // if (!userReferral) {
+        //     return res.status(404).json({ status: 'error', msg: "Points not found for this user" });
+        // }
 
-        if (!userReferral) {
-            return res.status(404).json({ status: 'error', msg: "Points not found for this user" });
-        }
-
-        // Generate a JWT token without expiration
         const token = jwt.sign(
             {
                 userId: User._id,
+                email: User.email,
             },
             JWT_SECRET // No expiration set here
         );
 
-        // Send the token in the response
         res.status(200).json({
             token, // Send the token to the client
             status: "Ok",
             msg: "User Login Successfully",
             User,
-            points: userPoints,
-            referral: userReferral
+            points: userPoints || 0,
+            referral: userReferral || null
         });
 
     } catch (error) {
@@ -188,6 +184,7 @@ const handleLogin = async (req, res) => {
         res.status(500).json({ msg: "Server error", error });
     }
 };
+
 
 // Get Referral By Id 
 const handleMyReferals = async (req, res) => {
